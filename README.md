@@ -77,60 +77,22 @@ python main_scripts/main.py
 ## UML-диаграмма функций
 ```mermaid
 flowchart TD
-  A[FastAPI app] --> B[API Endpoints]
-  B -->|POST /task/train_and_prediction| TP[task_processing result predict]
-  B -->|POST /task/prediction| TP
-  B -->|GET /task/train| TP
-  B -->|DELETE /task/delete| TP
+  A[FastAPI App] --> B[API Endpoints]
 
-  %% DELETE (последовательно)
-  TP -->|DELETE| DEL[delete_task_processing]
-  DEL --> AGDEL[agent delete table data_classif and data_claster]
-  AGDEL --> R1[return data deleted]
+  B -- DELETE /task/delete --> D[Delete data tables] --> R1[OK]
+  B -- GET /task/train --> T[Train models]
+  B -- POST /task/prediction --> P[Predict]
+  B -- POST /task/train_and_prediction --> TP[Train + Predict]
 
-  %% ОБЩЕЕ ДЛЯ LEARN/PREDICT
-  TP -->|LEARN or PREDICT| DB[DatabaseConnector connect]
-  DB --> CHK[check_table_exists and create_model_table]
+  %% Train
+  T --> T1[Connect DB] --> T2[Load learn data] --> T3[Clusterization] --> T4[Classification] --> T5[Save best models] --> R2[Response trained]
 
-  %% LEARN — строго по шагам
-  CHK -->|LEARN| GETL[get_data_table learn]
-  GETL --> DLC[data_learn_claster_classif_distribution]
+  %% Predict
+  P --> P1[Connect DB] --> P2[Load predict data] --> P3[Load best models] --> P4[Cluster labels] --> P5[Class labels] --> P6[Add time and id] --> R3[Response result]
 
-  subgraph Learn
-    direction LR
-    DLC --> F1[data_formater clusterization]
-    F1 --> CL[data_clusterization]
-    CL --> ANA1[method_selector_by_analysis rules]
-    ANA1 --> OPT1[optimize_hyperparameters_claster]
-    OPT1 --> CM[clusterization_methods labels model]
-    CM --> F2[data_formater classification]
-    F2 --> CLSF[data_classification]
-    CLSF --> ANA2[method_selector_by_analysis rules]
-    ANA2 --> OPT2[optimize_hyperparameters_classif]
-    OPT2 --> SKC[classification_methods y_pred model]
-    SKC --> SAVE1[insert_data data_claster]
-    SAVE1 --> SAVE2[insert_data data_classif]
-    SAVE2 --> OUT1[processing_result_by_task LEARN]
-  end
-
-  %% PREDICT — строго по шагам
-  CHK -->|PREDICT| GETP[get_data_table predict]
-  GETP --> CHKM[check_exists_in_table data_classif]
-  CHKM -->|нет| ERR[return false]
-  CHKM -->|да| DPP[data_predict_claster_classif_distribution]
-
-  subgraph Predict
-    direction LR
-    DPP --> LOADC[load best cluster model]
-    LOADC --> F3[data_formater clusterization]
-    F3 --> APPLYC[clusterization_methods predict cluster labels]
-    APPLYC --> LOADM[load best classification model]
-    LOADM --> F4[data_formater classification]
-    F4 --> APPLYM[classification_methods predict class labels]
-    APPLYM --> CJ1[concatenate front time column]
-    CJ1 --> CJ2[concatenate front id column]
-    CJ2 --> OUT2[processing_result_by_task PREDICT]
-  end
+  %% Train + Predict triggers both
+  TP --> T
+  TP --> P
 ```
 
 ---
