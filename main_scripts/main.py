@@ -61,7 +61,7 @@ class StringsInputServer(BaseModel):
 # Задача DELETE
 async def delete_task_processing(
         db_connector_agent: DatabaseConnector
-)-> bool:
+) -> bool:
     """Удаляет данные
     о прошлом опыте моделей
     из таблиц агента.
@@ -128,10 +128,10 @@ async def data_learn_claster_classif_distribution(
             data, task_manager, "clasterization"
         )
     labels_cluster, name_model_clusterization, \
-        model_clusterization, hyper_accuracy = \
-            data_clasterization(
-                data_for_clustering, num_clusters
-            )
+    model_clusterization, hyper_accuracy = \
+        data_clasterization(
+            data_for_clustering, num_clusters
+        )
     data_with_labels = two_methods_included.concatenate_data_with_labels(
         data_for_clustering, labels_cluster, "behind"
     )
@@ -858,7 +858,7 @@ async def data_predict_claster_classif_distribution(
     # Добавление результатов к данным
     classif_data_with_labels_without_id = \
         two_methods_included.concatenate_data_with_labels(
-        data_for_clustering, y_pred, "behind"
+            data_for_clustering, y_pred, "behind"
         )
     classif_data_with_labels_without_id = \
         two_methods_included.concatenate_data_with_labels(
@@ -927,9 +927,11 @@ async def processing_result_by_task(
         df = pd.DataFrame(dataset)
         df = df.iloc[:, [0, 1, -1]]
         df.columns = ['ID', 'Timestamp', 'Label']
-        df['Timestamp'] = \
-            df['Timestamp'].apply(lambda x: x.strftime('%H:%M:%S')
-                if hasattr(x, 'strftime') else x)
+        df['Timestamp'] = df['Timestamp'].apply(
+            lambda x: (
+                x.strftime('%H:%M:%S') if hasattr(x, 'strftime') else x
+            )
+        )
         # Выводим таблицу с учетом ограничения на количество строк
         if len(df) > 30:
             # Группируем строки с одинаковыми метками
@@ -1028,13 +1030,12 @@ async def task_processing(result: str, predict: str) -> Dict[str, str]:
                     print("\tАлгоритм обучения будет запущен....")
                     print("\n[INFO PROCESSING]:")
                     if await \
-                            data_learn_claster_classif_distribution\
-                                        (
-                                            data,
-                                            result["task_manager"],
-                                            db_connector_agent,
-                                            db_connector_data
-                                        ):
+                            data_learn_claster_classif_distribution(
+                                        data,
+                                        result["task_manager"],
+                                        db_connector_agent,
+                                        db_connector_data
+                                    ):
                         # ВСТАВИТЬ ФУНКЦИЯ ОБРАБОТКИ ВЫВОДА
                         data_to_return = \
                             await processing_result_by_task(db_connector_data,
