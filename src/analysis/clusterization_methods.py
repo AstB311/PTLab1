@@ -16,7 +16,8 @@ def data_kmean_cluster(
     params: Optional[dict] = None,
     loaded_model: Optional[bytes] = None,
 ) -> Any:
-    """Выполняет кластеризацию данных с использованием алгоритма K-средних (KMeans)."""
+    """Выполняет кластеризацию данных с
+    использованием алгоритма K-средних (KMeans)."""
     if loaded_model is None and params is not None:
         model_cluster_kmeans = KMeans(
             n_clusters=params["n_clusters"],
@@ -36,7 +37,8 @@ def data_agglclust_cluster(
     params: Optional[dict] = None,
     loaded_model: Optional[bytes] = None,
 ) -> Any:
-    """Выполняет кластеризацию данных с использованием агломеративной кластеризации."""
+    """Выполняет кластеризацию данных
+    с использованием агломеративной кластеризации."""
     if loaded_model is None and params is not None:
         model_cluster_agg = AgglomerativeClustering(
             n_clusters=params["n_clusters"],
@@ -54,7 +56,8 @@ def data_specclust_clust(
     params: Optional[dict] = None,
     loaded_model: Optional[bytes] = None,
 ) -> Any:
-    """Выполняет кластеризацию данных с использованием спектральной кластеризации."""
+    """Выполняет кластеризацию данных
+    с использованием спектральной кластеризации."""
     if loaded_model is None and params is not None:
         model_cluster_spectral = SpectralClustering(
             n_clusters=params["n_clusters"],

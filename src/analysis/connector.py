@@ -74,7 +74,8 @@ class DatabaseConnector:
                 "SELECT 1 FROM information_schema.tables "
                 "WHERE table_schema = $1 AND table_name = $2)"
             )
-            exists = await self.conn.fetchval(query, schema, table_name.lower())
+            exists = await self.conn.fetchval(query, schema,
+                                              table_name.lower())
             return exists
         except asyncpg.PostgresError as e:
             print(

@@ -16,7 +16,8 @@ def concatenate_data_with_labels(
         labels_data: np.ndarray,
         side: str
 ) -> np.ndarray:
-    """Склеивает массив данных с метками кластеров, добавляя столбец меток с указанной стороны."""
+    """Склеивает массив данных с метками кластеров,
+    добавляя столбец меток с указанной стороны."""
     if len(data) != len(labels_data):
         raise ValueError("Длина массива data и столбца должна совпадать.")
 
@@ -86,7 +87,8 @@ def data_formater(data: List[Dict], task_manager: str, method: str) -> Any:
                 return data
 
         print(
-            f"Неизвестный task_manager: {task_manager}. Возвращаем пустой массив."
+            f"Неизвестный task_manager: {task_manager}. "
+            f"Возвращаем пустой массив."
         )
         return np.array([])
 
