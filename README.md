@@ -83,14 +83,16 @@ flowchart TD
   B -->|GET /task/train| TP
   B -->|DELETE /task/delete| TP
 
+  %% DELETE (последовательно)
   TP -->|DELETE| DEL[delete_task_processing]
   DEL --> AGDEL[agent delete table data_classif and data_claster]
   AGDEL --> R1[return data deleted]
 
+  %% ОБЩЕЕ ДЛЯ LEARN/PREDICT
   TP -->|LEARN or PREDICT| DB[DatabaseConnector connect]
   DB --> CHK[check_table_exists and create_model_table]
 
-  %% LEARN
+  %% LEARN — строго по шагам
   CHK -->|LEARN| GETL[get_data_table learn]
   GETL --> DLC[data_learn_claster_classif_distribution]
 
@@ -107,11 +109,11 @@ flowchart TD
     ANA2 --> OPT2[optimize_hyperparameters_classif]
     OPT2 --> SKC[classification_methods y_pred model]
     SKC --> SAVE1[insert_data data_claster]
-    SKC --> SAVE2[insert_data data_classif]
+    SAVE1 --> SAVE2[insert_data data_classif]
     SAVE2 --> OUT1[processing_result_by_task LEARN]
   end
 
-  %% PREDICT
+  %% PREDICT — строго по шагам
   CHK -->|PREDICT| GETP[get_data_table predict]
   GETP --> CHKM[check_exists_in_table data_classif]
   CHKM -->|нет| ERR[return false]
@@ -129,8 +131,6 @@ flowchart TD
     CJ1 --> CJ2[concatenate front id column]
     CJ2 --> OUT2[processing_result_by_task PREDICT]
   end
-
-
 ```
 
 ---
