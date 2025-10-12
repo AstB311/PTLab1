@@ -101,9 +101,9 @@ flowchart TD
     CL --> ANA1[method_selector_by_analysis rules]
     ANA1 --> OPT1[optimize_hyperparameters_claster]
     OPT1 --> CM[clusterization_methods labels model]
-    CONCAT1 --> F2[data_formater classification]
+    CM --> F2[data_formater classification]
     F2 --> CLSF[data_classification]
-    LIN --> ANA2[method_selector_by_analysis rules]
+    CLSF --> ANA2[method_selector_by_analysis rules]
     ANA2 --> OPT2[optimize_hyperparameters_classif]
     OPT2 --> SKC[classification_methods y_pred model]
     SKC --> SAVE1[insert_data data_claster]
@@ -122,12 +122,12 @@ flowchart TD
     DPP --> LOADC[load best cluster model]
     LOADC --> F3[data_formater clusterization]
     F3 --> APPLYC[clusterization_methods predict cluster labels]
-    CONCAT2 --> LOADM[load best classification model]
+    APPLYC --> LOADM[load best classification model]
     LOADM --> F4[data_formater classification]
     F4 --> APPLYM[classification_methods predict class labels]
-        SKC --> SAVE1[insert_data data_claster]
-    SKC --> SAVE2[insert_data data_classif]
-    LIM --> OUT2[processing_result_by_task PREDICT]
+    APPLYM --> CJ1[concatenate front time column]
+    CJ1 --> CJ2[concatenate front id column]
+    CJ2 --> OUT2[processing_result_by_task PREDICT]
   end
 
 
