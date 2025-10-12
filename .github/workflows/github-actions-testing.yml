@@ -29,7 +29,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Install additional dependencies for testing
         run: |
-          pip install pytest requests
+          pip install pytest requests pycodestyle
       - name: Lint with pycodestyle
         run: |
           pycodestyle src test
