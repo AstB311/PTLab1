@@ -59,7 +59,9 @@ class StringsInputServer(BaseModel):
 
 
 # Задача DELETE
-async def delete_task_processing(db_connector_agent: DatabaseConnector)-> bool:
+async def delete_task_processing(
+        db_connector_agent: DatabaseConnector
+)-> bool:
     """Удаляет данные
     о прошлом опыте моделей
     из таблиц агента.
@@ -125,19 +127,21 @@ async def data_learn_claster_classif_distribution(
         two_methods_included.data_formater(
             data, task_manager, "clasterization"
         )
-    labels_cluster, name_model_clusterization, model_clusterization, hyper_accuracy = \
-        data_clasterization(
-            data_for_clustering, num_clusters
-        )
+    labels_cluster, name_model_clusterization, \
+        model_clusterization, hyper_accuracy = \
+            data_clasterization(
+                data_for_clustering, num_clusters
+            )
     data_with_labels = two_methods_included.concatenate_data_with_labels(
         data_for_clustering, labels_cluster, "behind"
     )
     data_for_classification = two_methods_included.data_formater(
         data_with_labels, task_manager, "classification"
     )
-    name_model_classification, model_classification, model_accuracy = data_classification(
-        data_for_classification, label_column
-    )
+    name_model_classification, model_classification, \
+        model_accuracy = data_classification(
+            data_for_classification, label_column
+        )
     # Данные для вставки
     data_for_claster_table = {
         "machine": str(db_connector_data.equipment),
@@ -512,13 +516,15 @@ def data_clasterization(
     std = \
         np.std(data_for_clustering, axis=0)
     cv = \
-        np.mean(np.std(data_for_clustering, axis=0) / np.mean(data_for_clustering, axis=0))
+        np.mean(np.std(data_for_clustering, axis=0)
+                / np.mean(data_for_clustering, axis=0))
     iqr = \
-        np.mean(stats.iqr(data_for_clustering, axis=0)) # Межквартильный размах
+        np.mean(stats.iqr(data_for_clustering, axis=0))
     outliers_zscore = \
-        np.mean(np.abs(stats.zscore(data_for_clustering)) > 3) # Выявление выбросов
+        np.mean(np.abs(stats.zscore
+                       (data_for_clustering)) > 3)
     # Определение уровня шума
-    noise= "Low" if cv < 0.5 and outliers_zscore < 0.05 \
+    noise = "Low" if cv < 0.5 and outliers_zscore < 0.05 \
         else ("Medium"
               if cv < 1.0 and outliers_zscore < 0.1
               else "High")
@@ -535,7 +541,7 @@ def data_clasterization(
     print("METHOD:", algorithm_name)
     # Выбор одного метода из множества
     max_n_clusters = min(6, num_samples - 1)
-    #Вызов алгоритма по выбранному методу
+    # Вызов алгоритма по выбранному методу
     with warnings.catch_warnings():
         warnings.simplefilter("ignore",
                               category=UserWarning)
@@ -603,7 +609,7 @@ def data_clasterization(
             # Определение лучших гиперпараметров
             result = \
                 two_methods_included.optimize_hyperparameters_claster(
-                SpectralClustering, param_grid,
+                    SpectralClustering, param_grid,
                     data_for_clustering, n_trials=100
                 )
             # Определение лучших гиперпараметров
@@ -736,7 +742,8 @@ async def data_predict_claster_classif_distribution(
 
     Raises:
         Exception:
-        Если произошла ошибка во время прогнозирования или подключения к базе данных.
+        Если произошла ошибка во время
+        прогнозирования или подключения к базе данных.
     """
     method_cluster = ""
     # Кластеризация
@@ -746,7 +753,7 @@ async def data_predict_claster_classif_distribution(
             db_connector_data.equipment_predict
         )
     # Выбор нужной строки, если выдается несколько
-    if len(data_about_cluserization)>1:
+    if len(data_about_cluserization) > 1:
         # Сортировка данных по значению accuracy в порядке убывания
         ssorted_data = sorted(data_about_cluserization,
                               key=lambda item: (item['accuracy'],
@@ -770,7 +777,7 @@ async def data_predict_claster_classif_distribution(
         )
     elif method_cluster == "AgglomerativeClustering":
         labels_cluster = clusterization_methods.data_agglclust_cluster(
-            data_for_clustering,None, model_cluster
+            data_for_clustering, None, model_cluster
         )
     elif method_cluster == "SpectralClustering":
         labels_cluster = clusterization_methods.data_specclust_clust(
@@ -852,7 +859,7 @@ async def data_predict_claster_classif_distribution(
     classif_data_with_labels_without_id = \
         two_methods_included.concatenate_data_with_labels(
         data_for_clustering, y_pred, "behind"
-    )
+        )
     classif_data_with_labels_without_id = \
         two_methods_included.concatenate_data_with_labels(
             classif_data_with_labels_without_id, time_col, "front"
@@ -864,15 +871,17 @@ async def data_predict_claster_classif_distribution(
     # Обработка ограничений
     print("\n[RESULT TASK]:")
     if label_limit is not None:
-        classif_data_with_labels = \
-            await two_methods_included.processing_limit_str(
-                classif_data_with_labels, str_limit
+        classif_data_with_labels = await \
+            two_methods_included.processing_limit_str(
+                classif_data_with_labels,
+                str_limit
             )
     if str_limit is not None:
         classif_data_with_labels = await \
             two_methods_included.processing_limit_label(
-            classif_data_with_labels, label_limit
-        )
+                classif_data_with_labels,
+                label_limit
+            )
     return classif_data_with_labels
 
 
@@ -893,7 +902,8 @@ async def processing_result_by_task(
         dataset: List[Dict].
         Список словарей, содержащих результаты для обработки.
         task_manager: str.
-        Идентификатор задачи, определяющий, какие действия необходимо выполнить.
+        Идентификатор задачи, определяющий,
+        какие действия необходимо выполнить.
 
     Returns:
         Dict[str, str].
@@ -917,8 +927,9 @@ async def processing_result_by_task(
         df = pd.DataFrame(dataset)
         df = df.iloc[:, [0, 1, -1]]
         df.columns = ['ID', 'Timestamp', 'Label']
-        df['Timestamp'] = df['Timestamp'].apply(lambda x: x.strftime('%H:%M:%S')
-        if hasattr(x, 'strftime') else x)
+        df['Timestamp'] = \
+            df['Timestamp'].apply(lambda x: x.strftime('%H:%M:%S')
+                if hasattr(x, 'strftime') else x)
         # Выводим таблицу с учетом ограничения на количество строк
         if len(df) > 30:
             # Группируем строки с одинаковыми метками
@@ -956,7 +967,8 @@ async def task_processing(result: str, predict: str) -> Dict[str, str]:
 
     Args:
         result: dict.
-        Словарь, содержащий параметры задачи, такие как сервер БД, порт, имена БД,
+        Словарь, содержащий параметры задачи,
+        такие как сервер БД, порт, имена БД,
         учетные данные и задача (DELETE, LEARN, PREDICT).
         predict: str. Имя таблицы для предсказания.
 
@@ -967,7 +979,8 @@ async def task_processing(result: str, predict: str) -> Dict[str, str]:
 
     Raises:
         Exception:
-        Если произошла ошибка при подключении к базе данных, создании таблиц, получении данных
+        Если произошла ошибка при подключении к базе данных,
+        создании таблиц, получении данных
         или выполнении других операций.
     """
     data_to_return = {}
@@ -1015,10 +1028,13 @@ async def task_processing(result: str, predict: str) -> Dict[str, str]:
                     print("\tАлгоритм обучения будет запущен....")
                     print("\n[INFO PROCESSING]:")
                     if await \
-                            data_learn_claster_classif_distribution(data,
-                                                                    result["task_manager"],
-                                                                    db_connector_agent,
-                                                                    db_connector_data):
+                            data_learn_claster_classif_distribution\
+                                        (
+                                            data,
+                                            result["task_manager"],
+                                            db_connector_agent,
+                                            db_connector_data
+                                        ):
                         # ВСТАВИТЬ ФУНКЦИЯ ОБРАБОТКИ ВЫВОДА
                         data_to_return = \
                             await processing_result_by_task(db_connector_data,
@@ -1063,20 +1079,25 @@ async def task_processing(result: str, predict: str) -> Dict[str, str]:
                     print("\tАлгоритм обучения "
                           "и предсказания будет запущен....")
                     print("\n[INFO PROCESSING]:")
-                    if await data_learn_claster_classif_distribution(data, "LEARN", db_connector_agent, db_connector_data):
+                    if await data_learn_claster_classif_distribution(
+                            data, "LEARN", db_connector_agent,
+                            db_connector_data
+                    ):
                         data = await db_connector_data.get_data_table(predict)
                         data_all = \
                             await data_predict_claster_classif_distribution(
-                            db_connector_data,
-                            db_connector_agent,
-                            data,
-                            "PREDICT",
-                            result["label_limit"],
-                            result["str_limit"])
+                                db_connector_data,
+                                db_connector_agent,
+                                data,
+                                "PREDICT",
+                                result["label_limit"],
+                                result["str_limit"]
+                            )
                         # функция обработки вывода
                         data_to_return = \
                             await processing_result_by_task(db_connector_data,
-                                                            data_all, "PREDICT")
+                                                            data_all,
+                                                            "PREDICT")
                         await db_connector_agent.close()
                         await db_connector_data.close()
                         return data_to_return
@@ -1110,6 +1131,7 @@ async def concatenate_strings(input: StringsInputServer):
     except Exception as e:
         raise HTTPException(status_code=500,
                             detail=f"Внутренняя ошибка сервера: {str(e)}")
+
 
 # Функция принятия входных для задачи обучения
 @app.get("/task/train")
@@ -1191,7 +1213,7 @@ def run():
     # Запускаем сервер
     uvicorn.run(app, host="127.0.0.1", port=8000)
 
+
 # Основной блок
 nest_asyncio.apply()
 run()
-
