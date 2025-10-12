@@ -74,7 +74,7 @@ python main_scripts/main.py
 
 ---
 
-## UML-диаграмма классов
+## UML-диаграмма функций
 ```mermaid
 flowchart TD
   A[FastAPI app] --> B[API Endpoints]
