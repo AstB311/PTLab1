@@ -127,11 +127,15 @@ async def data_learn_claster_classif_distribution(
         two_methods_included.data_formater(
             data, task_manager, "clasterization"
         )
-    labels_cluster, name_model_clusterization, \
-    model_clusterization, hyper_accuracy = \
-        data_clasterization(
-            data_for_clustering, num_clusters
-        )
+    (
+        labels_cluster,
+        name_model_clusterization,
+        model_clusterization,
+        hyper_accuracy
+    ) = data_clasterization(
+        data_for_clustering,
+        num_clusters
+    )
     data_with_labels = two_methods_included.concatenate_data_with_labels(
         data_for_clustering, labels_cluster, "behind"
     )
