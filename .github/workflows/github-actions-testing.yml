@@ -32,7 +32,7 @@ jobs:
           pip install pytest requests pycodestyle
       - name: Lint with pycodestyle
         run: |
-          pycodestyle src test
+          pycodestyle src tests
       - name: Test with pytest
         run: |
-          PYTHONPATH=./:./src/ pytest test
+          PYTHONPATH=./:./src/ pytest tests
