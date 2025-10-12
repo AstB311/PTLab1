@@ -77,22 +77,39 @@ python main_scripts/main.py
 ## UML-диаграмма функций
 ```mermaid
 flowchart TD
-  A[FastAPI App] --> B[API Endpoints]
+  A[FastAPI_app] -->|POST /task/train_and_prediction| TP[task_processing]
+  A -->|POST /task/prediction| TP
+  A -->|GET /task/train| TP
+  A -->|DELETE /task/delete| TP
 
-  B -- DELETE /task/delete --> D[Delete data tables] --> R1[OK]
-  B -- GET /task/train --> T[Train models]
-  B -- POST /task/prediction --> P[Predict]
-  B -- POST /task/train_and_prediction --> TP[Train + Predict]
+  %% DELETE
+  TP -->|DELETE| DEL[delete_task_processing]
+  DEL --> AGDEL[delete_table_agent]
+  AGDEL --> RESDEL[processing_result_by_task]
 
-  %% Train
-  T --> T1[Connect DB] --> T2[Load learn data] --> T3[Clusterization] --> T4[Classification] --> T5[Save best models] --> R2[Response trained]
+  %% LEARN
+  TP -->|LEARN| CONN[connect]
+  CONN --> CHK[check_table_exists]
+  CHK --> CREATE[create_model_table]
+  CREATE --> GETL[get_data_table]
+  GETL --> DIST1[data_learn_claster_classif_distribution]
+  DIST1 --> FORM1[data_formater_clusterization]
+  FORM1 --> CL[data_clusterization]
+  CL --> FORM2[data_formater_classification]
+  FORM2 --> CLASS[data_classification]
+  CLASS --> INSERT1[insert_data]
+  INSERT1 --> RESL[processing_result_by_task]
 
-  %% Predict
-  P --> P1[Connect DB] --> P2[Load predict data] --> P3[Load best models] --> P4[Cluster labels] --> P5[Class labels] --> P6[Add time and id] --> R3[Response result]
-
-  %% Train + Predict triggers both
-  TP --> T
-  TP --> P
+  %% PREDICT
+  TP -->|PREDICT| CONN2[connect]
+  CONN2 --> GETP[get_data_table]
+  GETP --> CHKEX[check_exists_in_table]
+  CHKEX --> LOADM[get_data_table_in_coloumn]
+  LOADM --> DIST2[data_predict_claster_classif_distribution]
+  DIST2 --> FORM3[data_formater_clusterization]
+  FORM3 --> CONCAT[concatenate_data_with_labels]
+  CONCAT --> FORM4[data_formater_classification]
+  FORM4 --> RESP[processing_result_by_task]
 ```
 
 ---
