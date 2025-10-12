@@ -76,27 +76,64 @@ python main_scripts/main.py
 
 ## UML-диаграмма классов
 ```mermaid
-classDiagram
-    class DatabaseConnector {
-      +connect() asyncpg.Connection
-      +check_table_exists(table_name: str, schema: str = "public") bool
-      +check_exists_in_table(table_name: str, machine_name: str, schema: str = "public") bool
-      +create_model_table(table_name: str, table_column_name: str, schema: str = "public") void
-      +insert_data(table_name: str, data: Dict[str, Any], schema: str = "public") void
-      +get_data_table(table_name: str, schema: str = "public") List[Dict[str, Any]]
-      +get_data_table_in_coloumn(table_name: str, column_name: str, machine_name: str, schema: str = "public") List[Dict[str, Any]]
-      +delete_table_agent(table_name: str, schema: str = "public") void
-      +close() void
-    }
+flowchart TD
+  A[FastAPI app] --> B[API Endpoints]
+  B -->|POST /task/train_and_prediction| TP[task_processing result predict]
+  B -->|POST /task/prediction| TP
+  B -->|GET /task/train| TP
+  B -->|DELETE /task/delete| TP
 
-    DatabaseConnector : -server
-    DatabaseConnector : -port
-    DatabaseConnector : -database
-    DatabaseConnector : -user
-    DatabaseConnector : -password
-    DatabaseConnector : -equipment
-    DatabaseConnector : -equipment_predict
-    DatabaseConnector : -conn
+  TP -->|DELETE| DEL[delete_task_processing]
+  DEL --> AGDEL[agent delete table data_classif and data_claster]
+  AGDEL --> R1[return data deleted]
+
+  TP -->|LEARN or PREDICT| DB[DatabaseConnector connect]
+  DB --> CHK[check_table_exists and create_model_table]
+
+  %% LEARN
+  CHK -->|LEARN| GETL[get_data_table learn]
+  GETL --> DLC[data_learn_claster_classif_distribution]
+
+  subgraph Learn
+    direction LR
+    DLC --> F1[data_formater clasterization]
+    F1 --> CL[data_clasterization]
+    CL --> ANA1[method_selector_by_analysis rules]
+    ANA1 --> OPT1[optimize_hyperparameters_claster]
+    OPT1 --> CM[clusterization_methods labels model]
+    CM --> CONCAT1[concatenate_data_with_labels behind]
+    CONCAT1 --> F2[data_formater classification]
+    F2 --> CLSF[data_classification]
+    CLSF --> LIN[determine_linearity]
+    LIN --> ANA2[method_selector_by_analysis rules]
+    ANA2 --> OPT2[optimize_hyperparameters_classif]
+    OPT2 --> SKC[classification_methods y_pred model]
+    SKC --> SAVE1[insert_data data_claster]
+    SKC --> SAVE2[insert_data data_classif]
+    SAVE2 --> OUT1[processing_result_by_task LEARN]
+  end
+
+  %% PREDICT
+  CHK -->|PREDICT| GETP[get_data_table predict]
+  GETP --> CHKM[check_exists_in_table data_classif]
+  CHKM -->|нет| ERR[return false]
+  CHKM -->|да| DPP[data_predict_claster_classif_distribution]
+
+  subgraph Predict
+    direction LR
+    DPP --> LOADC[load best cluster model]
+    LOADC --> F3[data_formater clasterization]
+    F3 --> APPLYC[clusterization_methods predict cluster labels]
+    APPLYC --> CONCAT2[concatenate behind]
+    CONCAT2 --> LOADM[load best classification model]
+    LOADM --> F4[data_formater classification]
+    F4 --> APPLYM[classification_methods predict class labels]
+    APPLYM --> CJ1[concatenate front time column]
+    CJ1 --> CJ2[concatenate front id column]
+    CJ2 --> LIM[apply limits if set]
+    LIM --> OUT2[processing_result_by_task PREDICT]
+  end
+
 
 ```
 
