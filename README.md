@@ -46,6 +46,7 @@ assistant/
 2. Управление зависимостями: **requirements.txt**  
 3. Модульное тестирование: **pytest**   
 4. CI/CD: **GitHub Actions**  
+5. Проверка стиля кода: **pycodestyle (PEP8)**
 
 ---
 
@@ -59,6 +60,11 @@ pip install -r requirements.txt
 ### Запуск тестов
 ```bash
 pytest test
+```
+
+### Проверка стиля кода (PEP8)
+```bash
+pycodestyle src tests main_scripts
 ```
 
 ### Запуск программы
@@ -101,5 +107,6 @@ classDiagram
 1. Базовые команды **Git** и принципы работы с репозиторием на GitHub.  
 2. Настройка CI/CD через **GitHub Actions**.
 3. Применение **pytest** для тестирования.
+4. Контроль качества кода с помощью **pycodestyle**.
 
 Проект успешно протестирован и соответствует требованиям.  
