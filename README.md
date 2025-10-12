@@ -96,15 +96,13 @@ flowchart TD
 
   subgraph Learn
     direction LR
-    DLC --> F1[data_formater clasterization]
-    F1 --> CL[data_clasterization]
+    DLC --> F1[data_formater clusterization]
+    F1 --> CL[data_clusterization]
     CL --> ANA1[method_selector_by_analysis rules]
     ANA1 --> OPT1[optimize_hyperparameters_claster]
     OPT1 --> CM[clusterization_methods labels model]
-    CM --> CONCAT1[concatenate_data_with_labels behind]
     CONCAT1 --> F2[data_formater classification]
     F2 --> CLSF[data_classification]
-    CLSF --> LIN[determine_linearity]
     LIN --> ANA2[method_selector_by_analysis rules]
     ANA2 --> OPT2[optimize_hyperparameters_classif]
     OPT2 --> SKC[classification_methods y_pred model]
@@ -122,15 +120,13 @@ flowchart TD
   subgraph Predict
     direction LR
     DPP --> LOADC[load best cluster model]
-    LOADC --> F3[data_formater clasterization]
+    LOADC --> F3[data_formater clusterization]
     F3 --> APPLYC[clusterization_methods predict cluster labels]
-    APPLYC --> CONCAT2[concatenate behind]
     CONCAT2 --> LOADM[load best classification model]
     LOADM --> F4[data_formater classification]
     F4 --> APPLYM[classification_methods predict class labels]
-    APPLYM --> CJ1[concatenate front time column]
-    CJ1 --> CJ2[concatenate front id column]
-    CJ2 --> LIM[apply limits if set]
+        SKC --> SAVE1[insert_data data_claster]
+    SKC --> SAVE2[insert_data data_classif]
     LIM --> OUT2[processing_result_by_task PREDICT]
   end
 
