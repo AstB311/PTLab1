@@ -1,5 +1,6 @@
 import pytest
 from unittest.mock import AsyncMock, patch
+# new
 import assistant.src.analysis.connector
 from assistant.src.analysis.connector import DatabaseConnector
 
