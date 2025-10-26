@@ -1,11 +1,12 @@
 import pytest
 from unittest.mock import AsyncMock, patch
-# import assistant
-# from assistant import src.analysis.connector
 from src.analysis.connector import DatabaseConnector
+# from assistant.src.analysis.connector import DatabaseConnector
 
 
 @pytest.mark.asyncio
+# @patch("assistant.src.analysis.connector.asyncpg.connect",
+#       new_callable=AsyncMock)
 @patch("src.analysis.connector.asyncpg.connect",
        new_callable=AsyncMock)
 async def test_connect_success(mock_connect):
@@ -20,12 +21,14 @@ async def test_connect_success(mock_connect):
 
 
 @pytest.mark.asyncio
+# @patch("assistant.src.analysis.connector.asyncpg.connect",
+#        new_callable=AsyncMock)
 @patch("src.analysis.connector.asyncpg.connect",
        new_callable=AsyncMock)
 async def test_connect_failure(mock_connect):
     mock_connect.side_effect = Exception("Connection failed")
 
-    connector = DatabaseConnector("localhost", 5432, "db", "user", "pass")
+    connector = DatabaseConnector("localhost", 52, "db", "user", "pass")
     with pytest.raises(Exception):
         await connector.connect()
 
@@ -34,6 +37,7 @@ async def test_connect_failure(mock_connect):
 async def test_check_table_exists():
     connector = DatabaseConnector("localhost", 5432, "db", "user", "pass")
     mock_conn = AsyncMock()
+    #mock_conn.fetchval.return_value = False
     mock_conn.fetchval.return_value = True
     connector.conn = mock_conn
 
