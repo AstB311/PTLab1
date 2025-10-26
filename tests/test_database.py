@@ -1,10 +1,11 @@
 import pytest
 from unittest.mock import AsyncMock, patch
-from src.analysis.connector import DatabaseConnector
+import assistant.src.analysis.connector
+from assistant.src.analysis.connector import DatabaseConnector
 
 
 @pytest.mark.asyncio
-@patch("src.analysis.connector.asyncpg.connect", new_callable=AsyncMock)
+@patch("assistant.src.analysis.connector.asyncpg.connect", new_callable=AsyncMock)
 async def test_connect_success(mock_connect):
     mock_conn = AsyncMock()
     mock_connect.return_value = mock_conn
@@ -17,7 +18,7 @@ async def test_connect_success(mock_connect):
 
 
 @pytest.mark.asyncio
-@patch("src.analysis.connector.asyncpg.connect", new_callable=AsyncMock)
+@patch("assistant.src.analysis.connector.asyncpg.connect", new_callable=AsyncMock)
 async def test_connect_failure(mock_connect):
     mock_connect.side_effect = Exception("Connection failed")
 
