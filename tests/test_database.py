@@ -37,7 +37,7 @@ async def test_connect_failure(mock_connect):
 async def test_check_table_exists():
     connector = DatabaseConnector("localhost", 5432, "db", "user", "pass")
     mock_conn = AsyncMock()
-    #mock_conn.fetchval.return_value = False
+    # mock_conn.fetchval.return_value = False
     mock_conn.fetchval.return_value = True
     connector.conn = mock_conn
 
