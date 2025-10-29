@@ -29,6 +29,7 @@ async def test_connect_passes_required_params(mock_connect, connector):
         port=5432,
     )
 
+
 @pytest.mark.asyncio
 @patch("src.analysis.connector.asyncpg.connect", new_callable=AsyncMock)
 async def test_connect_error(mock_connect, connector):
@@ -45,7 +46,8 @@ async def test_check_table_exists(connector):
     connector.conn = mock_conn
     mock_conn.fetchval.return_value = True
 
-    ok = await connector.check_table_exists(table_name="MyTable", schema="myschema")
+    ok = await connector.check_table_exists(table_name="MyTable",
+                                            schema="myschema")
     assert ok is True
 
     # args: (sql, schema, table_name_lower)
@@ -60,7 +62,9 @@ async def test_check_exists_in_table(connector):
     connector.conn = mock_conn
     mock_conn.fetchval.return_value = True
 
-    ok = await connector.check_exists_in_table("models", "machX", schema="custom")
+    ok = await connector.check_exists_in_table("models",
+                                               "machX",
+                                               schema="custom")
     assert ok is True
 
     # args: (sql, like_param)
