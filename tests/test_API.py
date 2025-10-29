@@ -6,6 +6,7 @@ from unittest.mock import patch
 BASE_URL = "http://127.0.0.1:8000/task"
 
 
+
 @pytest.fixture
 def base_data():
     return {
@@ -61,6 +62,12 @@ def test_train_and_prediction(mock_post, base_data, mock_post_response):
     assert response.status_code == 200
     assert "data" in response.json()
 
+    # Проверяем на верный адрес запроса
+    mock_post.assert_called_once_with(
+        f"{BASE_URL}/train_and_prediction",
+        json=data,
+    )
+
 
 @patch("requests.get")
 def test_train(mock_get, base_data, mock_get_response):
@@ -74,6 +81,12 @@ def test_train(mock_get, base_data, mock_get_response):
     response = requests.get(f"{BASE_URL}/train", json=data)
     assert response.status_code == 200
     assert "data" in response.json()
+
+    # Проверяем на верный адрес запроса
+    mock_get.assert_called_once_with(
+        f"{BASE_URL}/train",
+        json=data,
+    )
 
 
 @patch("requests.post")
@@ -91,6 +104,12 @@ def test_prediction(mock_post, base_data, mock_post_response):
     assert response.status_code == 200
     assert "data" in response.json()
 
+    # Проверяем на верный адрес запроса
+    mock_post.assert_called_once_with(
+        f"{BASE_URL}/prediction",
+        json=data,
+    )
+
 
 @patch("requests.delete")
 def test_delete(mock_delete, base_data, mock_post_response):
@@ -100,3 +119,9 @@ def test_delete(mock_delete, base_data, mock_post_response):
     response = requests.delete(f"{BASE_URL}/delete", json=data)
     assert response.status_code == 200
     assert "data" in response.json()
+
+    # Проверяем на верный адрес запроса
+    mock_delete.assert_called_once_with(
+        f"{BASE_URL}/delete",
+        json=data,
+    )
