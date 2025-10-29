@@ -5,9 +5,11 @@ from src.analysis.connector import DatabaseConnector
 from fastapi import HTTPException
 import asyncpg
 
+
 @pytest.fixture
 def connector():
     return DatabaseConnector("localhost", 5432, "db", "user", "pass")
+
 
 # CONNECT
 @pytest.mark.asyncio
@@ -35,6 +37,7 @@ async def test_connect_error(mock_connect, connector):
         await connector.connect()
     assert "Database connection error" in ei.value.detail
 
+
 # check_table_exists
 @pytest.mark.asyncio
 async def test_check_table_exists(connector):
@@ -48,6 +51,7 @@ async def test_check_table_exists(connector):
     # args: (sql, schema, table_name_lower)
     args = mock_conn.fetchval.call_args[0]
     assert args[1] is not None
+
 
 # check_exists_in_table
 @pytest.mark.asyncio
@@ -63,6 +67,7 @@ async def test_check_exists_in_table(connector):
     args = mock_conn.fetchval.call_args[0]
     assert args[0] is not None  # sql, игнорируем
     assert args[1] is not None
+
 
 # create_model_table
 @pytest.mark.asyncio
@@ -85,6 +90,7 @@ async def test_get_data_table(connector):
     assert isinstance(rows, list)
     mock_conn.fetch.assert_awaited_once()
 
+
 # get_data_table_in_coloumn
 @pytest.mark.asyncio
 async def test_get_data_table_in_coloumn(connector):
@@ -102,6 +108,7 @@ async def test_get_data_table_in_coloumn(connector):
     assert args[0] is not None  # sql, игнорируем
     assert args[1] == "%mach%"
 
+
 # delete_table_agent
 @pytest.mark.asyncio
 async def test_delete_table_agent(connector):
@@ -110,6 +117,7 @@ async def test_delete_table_agent(connector):
 
     await connector.delete_table_agent("models", schema="public")
     mock_conn.execute.assert_awaited_once()
+
 
 # close
 @pytest.mark.asyncio
