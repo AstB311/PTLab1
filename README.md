@@ -16,7 +16,7 @@
 
 ---
 
-## Структура проекта
+## Структура проекта 
 ```
 assistant/
  ├── .github/workflows/github-actions-testing.yml   # CI/CD
